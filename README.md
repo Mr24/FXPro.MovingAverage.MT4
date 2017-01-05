@@ -1,0 +1,1 @@
+# FXPro.MovingAverage.MT4
