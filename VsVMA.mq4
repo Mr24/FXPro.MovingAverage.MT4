@@ -17,29 +17,19 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.3.0 Update:2017.01.06"
+#property description "VsV.MT4.MovingAverage - Ver.0.4.0 Update:2017.01.06"
 #property strict
+
+#include <MovingAverages.mqh>
 
 //--- MovingAverage : Initial Setup ---//
 #property indicator_chart_window
-#property indicator_buffers 3
-
+#property indicator_buffers 1
 //+ MA.Main
 #property indicator_color1 Red
 #property indicator_type1 DRAW_LINE
 #property indicator_style1  STYLE_SOLID
 #property indicator_width1 2
-//+ Top.100
-#property indicator_color2 LightGoldenrod
-#property indicator_type2 DRAW_LINE
-#property indicator_style2  STYLE_DOT
-#property indicator_width2 1
-//+ Top.200
-#property indicator_color3 LightGoldenrod
-#property indicator_type3 DRAW_LINE
-#property indicator_style3  STYLE_DOT
-#property indicator_width3 1
-
 
 //--- MovingAverage : Indicator parameters
 input int            InpMAPeriod=200;        // Period
@@ -48,8 +38,7 @@ input ENUM_MA_METHOD InpMAMethod=MODE_EMA;  // Method
 
 //--- MovingAverage : Indicator buffer
 double ExtMainBuffer[];
-double ExtTop100Buffer[];
-double ExtTop200Buffer[];
+
 
 //+------------------------------------------------------------------+
 //| Custom Indicator Initialization Function                         |
@@ -64,7 +53,7 @@ int OnInit(void)
   IndicatorShortName(short_name+string(InpMAPeriod)+")");
 
 //--- 1 additional buffer used for counting.
-  IndicatorBuffers(3);  
+  IndicatorBuffers(1);  
   IndicatorDigits(Digits);
   
 //--- MovingAverage : Drawing Settings
@@ -72,26 +61,14 @@ int OnInit(void)
   SetIndexStyle(0,DRAW_LINE);
   SetIndexShift(0,InpMAShift);
   SetIndexLabel(0,"MA.Main");
-//+ Top.100
-  SetIndexStyle(1,DRAW_LINE);
-  SetIndexShift(1,InpMAShift);
-  SetIndexLabel(1,"Top.100");
-//+ Top.200
-  SetIndexStyle(2,DRAW_LINE);
-  SetIndexShift(2,InpMAShift);
-  SetIndexLabel(2,"Top.200");
-
 
 //--- MovingAverage : Indicator Buffers Mapping
   SetIndexBuffer(0,ExtMainBuffer);
-  SetIndexBuffer(1,ExtTop100Buffer);
-  SetIndexBuffer(2,ExtTop200Buffer);
 
 //--- MovingAverage : Drawing Begin
-  //# SetIndexDrawBegin(0,draw_begin);
-  SetIndexDrawBegin(0,InpMAPeriod+InpMAShift);
-  SetIndexDrawBegin(1,InpMAPeriod+InpMAShift);
-  SetIndexDrawBegin(2,InpMAPeriod+InpMAShift);
+  SetIndexDrawBegin(0,draw_begin);
+  //# SetIndexDrawBegin(0,InpMAPeriod+InpMAShift);
+
 
 //--- MovingAverage : Initialization Done
   return(INIT_SUCCEEDED);
@@ -116,26 +93,38 @@ int OnCalculate(const int rates_total,
 {
 
 //--- MovingAverage.Calucurate.Setup ---//
+  int i,limit;
+
 //--- Check for Bars Count
   if(rates_total<InpMAPeriod-1 || InpMAPeriod<2)
     return(0);
 
 //--- Counting from 0 to rates_total
   ArraySetAsSeries(ExtMainBuffer,false);  //# OLD => New
-  ArraySetAsSeries(ExtTop100Buffer,false);
-  ArraySetAsSeries(ExtTop200Buffer,false);
   ArraySetAsSeries(close,false);          //# OLD => New
 
 //--- First Calculation or Number of Bars was Changed
   if(prev_calculated==0)
   {
     ArrayInitialize(ExtMainBuffer,0); //# ExtMainBuffer=0 : ALL
-    ArrayInitialize(ExtTop100Buffer,0);
-    ArrayInitialize(ExtTop200Buffer,0);
+
+    limit=InpMAPeriod;
+    ExtMainBuffer[0]=close[0];
+
+    for(i=1;i<limit;i++)
+    {
+      ExtMainBuffer[i]=ExponentialMA(i,InpMAPeriod,ExtMainBuffer[i-1],close);
+    }
   }
 
-//--- Calculation
-  CalculateEMA(rates_total,prev_calculated,close);
+//--- Main Loop Calculation
+  else
+    limit=prev_calculated-1;
+
+  for( i=limit; i<rates_total && !IsStopped(); i++ )
+  {
+     ExtMainBuffer[i]=ExponentialMA(i,InpMAPeriod,ExtMainBuffer[i-1],close); 
+  }
 
 //--- MovingAverage.Calucurate.End ---//
 
@@ -144,42 +133,5 @@ int OnCalculate(const int rates_total,
   return(rates_total);
 
 }
-//***//
 
-
-//+---------------------------------------------------------------------+
-//|  Exponential Moving Average                     |
-//+---------------------------------------------------------------------+
-void CalculateEMA(int rates_total,int prev_calculated,const double &price[])
-{
-  //--- Initial Setup
-  int    i,limit;
-  double SmoothFactor=2.0/(1.0+InpMAPeriod);
-  double p=1.0;
-
-  //--- First Calculation or Number of Bars was Changed
-  if(prev_calculated==0) {
-    limit=InpMAPeriod;
-    ExtMainBuffer[0]=price[0];
-    ExtTop100Buffer[0]=price[0];
-    ExtTop200Buffer[0]=price[0];
-
-    for(i=1; i<limit; i++)
-    {
-      ExtMainBuffer[i]=price[i]*SmoothFactor+ExtMainBuffer[i-1]*(1.0-SmoothFactor);
-      ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
-      ExtTop200Buffer[i]=ExtMainBuffer[i]+(p/10*2);      
-    }
-  }
-  else
-    limit=prev_calculated-1;
-
-  //--- Main Loop
-  for(i=limit; i<rates_total && !IsStopped(); i++)
-  {
-    ExtMainBuffer[i]=price[i]*SmoothFactor+ExtMainBuffer[i-1]*(1.0-SmoothFactor);
-    ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
-    ExtTop200Buffer[i]=ExtMainBuffer[i]+(p/10*2);
-  }
-}
 //+------------------------------------------------------------------+
