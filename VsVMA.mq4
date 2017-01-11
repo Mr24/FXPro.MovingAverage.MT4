@@ -17,7 +17,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.5.2 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.5.3 Update:2017.01.11"
 #property strict
 
 #include <MovingAverages.mqh>
@@ -62,7 +62,7 @@ int OnInit(void)
 {
   string short_name,sInpLevel;
   int    draw_begin=0;
-  int l;
+  int l,ll;
   
 //--- MovingAverage : Indicator Short Name
   short_name="EMA(";
@@ -80,15 +80,21 @@ int OnInit(void)
 //+ Top.100
   for (l=1;l<InpLevels;l++)
   {
-    sInpLevel = (string)l;
+    // sInpLevel = (string)l;
+    ll = l/2;
     if(l % 2 == 0)
     {
+      sInpLevel = (string)ll;
+
       SetIndexStyle(l,DRAW_LINE);
       SetIndexShift(l,InpMAShift);
       SetIndexLabel(l,"Btm."+sInpLevel+"00");  
     }
     else
     {
+      ll=ll+1;
+      sInpLevel = (string)ll;
+
       SetIndexStyle(l,DRAW_LINE);
       SetIndexShift(l,InpMAShift);
       SetIndexLabel(l,"Top."+sInpLevel+"00");

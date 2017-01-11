@@ -8,11 +8,11 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.5.2 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.5.3 Update:2017.01.11"
 
 #include <MovingAverages.mqh>
 
-double ExtTop200Buffer[];
+// double ExtTop200Buffer[];
 
 //+------------------------------------------------------------------+
 //| Custom Indicator Initialization Function                         |
@@ -28,14 +28,28 @@ double OnMALevelsCalculate(const int levels,
 {
 	double result=0.0;
 	double p=1.0;
+	int l=levels/2;
+	double ll;
+	// double ll=(double)levels/2;
 
 	if(levels%2==0)
 	{
-		result=MainBuffer-(p/10);
+		ll = (double)l;
+		result=MainBuffer-(ll*p/10);
+		// result=MainBuffer-(ll*p/10);
+		// result=MainBuffer-((levels/2)*p/10);
+		// result=MainBuffer-(p/10);
 	}
 	else
 	{
-		result=MainBuffer+(p/10);
+		l=l+1;
+		ll = (double)l;
+		result=MainBuffer+(ll*p/10);
+		// result=MainBuffer+((ll+1)*p/10);
+		// l=levels/2;
+		// ll = (double)l;
+		// result=MainBuffer+((levels/2+1)*p/10);
+		// result=MainBuffer+(p/10);
 	}
 
 	return(result);
