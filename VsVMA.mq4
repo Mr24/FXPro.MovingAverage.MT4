@@ -17,11 +17,11 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.4.3 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.5.0 Update:2017.01.11"
 #property strict
 
 #include <MovingAverages.mqh>
-
+#include <VsVMA_Library.mqh>
 
 //--- MovingAverage : Initial Setup ---//
 #property indicator_chart_window
@@ -37,7 +37,7 @@
 #property indicator_style2  STYLE_DOT
 #property indicator_width2  1
 //+ Btm.100
-#property indicator_color3  LightGoldenrod
+#property indicator_color3  Blue
 #property indicator_type3   DRAW_LINE
 #property indicator_style3  STYLE_DOT
 #property indicator_width3  1
@@ -174,7 +174,8 @@ int OnCalculate(const int rates_total,
     for(i=1;i<limit;i++)
     {
       ExtMainBuffer[i]=ExponentialMA(i,InpMAPeriod,ExtMainBuffer[i-1],close);
-      ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
+      ExtTop100Buffer[i] = OnMACalculate(i,InpMAPeriod,ExtMainBuffer[i],close);
+      // ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
       ExtBtm100Buffer[i]=ExtMainBuffer[i]-(p/10);
     }
   }
@@ -186,7 +187,8 @@ int OnCalculate(const int rates_total,
   for( i=limit; i<rates_total && !IsStopped(); i++ )
   {
      ExtMainBuffer[i]=ExponentialMA(i,InpMAPeriod,ExtMainBuffer[i-1],close);
-     ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
+     ExtTop100Buffer[i] = OnMACalculate(i,InpMAPeriod,ExtMainBuffer[i],close);
+     // ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
      ExtBtm100Buffer[i]=ExtMainBuffer[i]-(p/10);
   }
 
