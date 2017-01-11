@@ -8,7 +8,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.6.2 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.6.3 Update:2017.01.11"
 
 #include <MovingAverages.mqh>
 
@@ -16,7 +16,7 @@
 input int             InpMAPeriod=200;        // Period
 input int             InpMAShift=0;          // Shift
 input ENUM_MA_METHOD  InpMAMethod=MODE_EMA;  // Method
-input int             InpLevels=5;
+input int             InpLevels=7;
 
 //--- MovingAverage : Indicator buffer
 //### MA.Main ###//
@@ -26,6 +26,8 @@ double ExtTop100Buffer[];
 double ExtBtm100Buffer[];
 double ExtTop200Buffer[];
 double ExtBtm200Buffer[];
+double ExtTop300Buffer[];
+double ExtBtm300Buffer[];
 
 
 
@@ -34,7 +36,7 @@ double ExtBtm200Buffer[];
 //+------------------------------------------------------------------+
 int OnMAInit(void)
 {
-	string sInpLevel;
+	string sInpLevel,sArray;
 	int l,ll;
 
 //--- 1 additional buffer used for counting.
@@ -76,11 +78,29 @@ int OnMAInit(void)
 
 //--- MovingAverage : Indicator Buffers Mapping
 	SetIndexBuffer(0,ExtMainBuffer);
+
+	/*
+	for(i=1;i<InpLevels,i++)
+	{
+		ll = l/2;
+
+		if(l%2==0)
+		{
+			sInpLevel = (string)ll;
+			sArray = "ExBtm"+sInpLevel+"00Buffer";
+			(double)sArray[];
+
+		}
+	}
+	*/
+
 	SetIndexBuffer(1,ExtTop100Buffer);
 	SetIndexBuffer(2,ExtBtm100Buffer);
 	SetIndexBuffer(3,ExtTop200Buffer);
 	SetIndexBuffer(4,ExtBtm200Buffer);
-
+	SetIndexBuffer(5,ExtTop300Buffer);
+	SetIndexBuffer(6,ExtBtm300Buffer);
+	
 
 	return 0;
 }
@@ -93,7 +113,7 @@ int OnMACalculate(const int total,const int prev, const double &price[])
 {
 
 //--- MovingAverage.Calucurate.Setup ---//
-  int i,limit;
+  int i,limit,l;
   double p=1.0;
 
 //--- Check for Bars Count
@@ -102,10 +122,13 @@ int OnMACalculate(const int total,const int prev, const double &price[])
 
 //--- Counting from 0 to rates_total
 	ArraySetAsSeries(ExtMainBuffer,false);  //# OLD => New
+
 	ArraySetAsSeries(ExtTop100Buffer,false);  //# OLD => New
   	ArraySetAsSeries(ExtBtm100Buffer,false);  //# OLD => New
   	ArraySetAsSeries(ExtTop200Buffer,false);  //# OLD => New
   	ArraySetAsSeries(ExtBtm200Buffer,false);  //# OLD => New
+  	ArraySetAsSeries(ExtTop300Buffer,false);  //# OLD => New
+  	ArraySetAsSeries(ExtBtm300Buffer,false);  //# OLD => New
   	ArraySetAsSeries(price,false);          //# OLD => New
 
 //--- First Calculation or Number of Bars was Changed
@@ -116,6 +139,8 @@ int OnMACalculate(const int total,const int prev, const double &price[])
     	ArrayInitialize(ExtBtm100Buffer,0);
     	ArrayInitialize(ExtTop200Buffer,0);
     	ArrayInitialize(ExtBtm200Buffer,0);
+    	ArrayInitialize(ExtTop300Buffer,0);
+    	ArrayInitialize(ExtBtm300Buffer,0);
 
     	limit=InpMAPeriod;
     	ExtMainBuffer[0]=price[0];
@@ -128,6 +153,8 @@ int OnMACalculate(const int total,const int prev, const double &price[])
       		ExtBtm100Buffer[i]=OnMALevelsCalculate(2,ExtMainBuffer[i]);
       		ExtTop200Buffer[i]=OnMALevelsCalculate(3,ExtMainBuffer[i]);
       		ExtBtm200Buffer[i]=OnMALevelsCalculate(4,ExtMainBuffer[i]);
+      		ExtTop300Buffer[i]=OnMALevelsCalculate(5,ExtMainBuffer[i]);
+      		ExtBtm300Buffer[i]=OnMALevelsCalculate(6,ExtMainBuffer[i]);
       	}
     }
 
@@ -142,6 +169,8 @@ int OnMACalculate(const int total,const int prev, const double &price[])
     	ExtBtm100Buffer[i]=OnMALevelsCalculate(2,ExtMainBuffer[i]);
     	ExtTop200Buffer[i]=OnMALevelsCalculate(3,ExtMainBuffer[i]);
     	ExtBtm200Buffer[i]=OnMALevelsCalculate(4,ExtMainBuffer[i]);
+    	ExtTop300Buffer[i]=OnMALevelsCalculate(5,ExtMainBuffer[i]);
+      	ExtBtm300Buffer[i]=OnMALevelsCalculate(6,ExtMainBuffer[i]);
   	}
 
   	return 0;

@@ -17,7 +17,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.6.2 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.6.3 Update:2017.01.11"
 #property strict
 
 #include <MovingAverages.mqh>
@@ -25,7 +25,7 @@
 
 //--- MovingAverage : Initial Setup ---//
 #property indicator_chart_window
-#property indicator_buffers 5
+#property indicator_buffers 7
 //+ MA.Main
 #property indicator_color1  Red
 #property indicator_type1   DRAW_LINE
@@ -42,6 +42,7 @@
 #property indicator_type3   DRAW_LINE
 #property indicator_style3  STYLE_DOT
 #property indicator_width3  1
+
 //+ Top.200
 #property indicator_color4  LightGoldenrod
 #property indicator_type4   DRAW_LINE
@@ -53,16 +54,16 @@
 #property indicator_style5  STYLE_DOT
 #property indicator_width5  1
 
-
-//--- MovingAverage : Indicator parameters
-/*
-input int             InpMAPeriod=200;        // Period
-input int             InpMAShift=0;          // Shift
-input ENUM_MA_METHOD  InpMAMethod=MODE_EMA;  // Method
-*/
-
-//--- MovingAverage : Indicator buffer
-// double ExtMainBuffer[];
+//+ Top.300
+#property indicator_color6  LightGoldenrod
+#property indicator_type6   DRAW_LINE
+#property indicator_style6  STYLE_DOT
+#property indicator_width6  1
+//+ Btm.300
+#property indicator_color7  LightGoldenrod
+#property indicator_type7   DRAW_LINE
+#property indicator_style7  STYLE_DOT
+#property indicator_width7  1
 
 
 //+------------------------------------------------------------------+
@@ -73,7 +74,6 @@ int OnInit(void)
   // string short_name,sInpLevel;
   string short_name;
   int    draw_begin=0;
-  // int l,ll;
   int l;
   
 //--- MovingAverage : Indicator Short Name
