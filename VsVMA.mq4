@@ -17,10 +17,11 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.4.1 Update:2017.01.06"
+#property description "VsV.MT4.MovingAverage - Ver.0.4.2 Update:2017.01.11"
 #property strict
 
 #include <MovingAverages.mqh>
+
 
 //--- MovingAverage : Initial Setup ---//
 #property indicator_chart_window
@@ -38,13 +39,15 @@
 
 
 //--- MovingAverage : Indicator parameters
-input int            InpMAPeriod=200;        // Period
-input int            InpMAShift=0;          // Shift
-input ENUM_MA_METHOD InpMAMethod=MODE_EMA;  // Method
+input int             InpMAPeriod=200;        // Period
+input int             InpMAShift=0;          // Shift
+input ENUM_MA_METHOD  InpMAMethod=MODE_EMA;  // Method
+input string          sInpLevels="1";
 
 //--- MovingAverage : Indicator buffer
 double ExtMainBuffer[];
 double ExtTop100Buffer[];
+
 
 //+------------------------------------------------------------------+
 //| Custom Indicator Initialization Function                         |
@@ -53,6 +56,7 @@ int OnInit(void)
 {
   string short_name;
   int    draw_begin=0;
+  int InpLevels=StrToInteger(sInpLevels);
 
 //--- MovingAverage : Indicator Short Name
   short_name="EMA(";
@@ -68,18 +72,23 @@ int OnInit(void)
   SetIndexShift(0,InpMAShift);
   SetIndexLabel(0,"MA.Main");
 //+ Top.100
-  SetIndexStyle(1,DRAW_LINE);
-  SetIndexShift(1,InpMAShift);
-  SetIndexLabel(1,"Top.100");
+  SetIndexStyle(InpLevels,DRAW_LINE);
+  SetIndexShift(InpLevels,InpMAShift);
+  SetIndexLabel(InpLevels,"Top.100");
+  //# SetIndexStyle(1,DRAW_LINE);
+  //# SetIndexShift(1,InpMAShift);
+  //# SetIndexLabel(1,"Top.100");
 
 
 //--- MovingAverage : Indicator Buffers Mapping
   SetIndexBuffer(0,ExtMainBuffer);
-  SetIndexBuffer(1,ExtTop100Buffer);
+  SetIndexBuffer(InpLevels,ExtTop100Buffer);
+  //# SetIndexBuffer(1,ExtTop100Buffer);
 
 //--- MovingAverage : Drawing Begin
   SetIndexDrawBegin(0,draw_begin);
-  SetIndexDrawBegin(1,draw_begin);
+  SetIndexDrawBegin(InpLevels,draw_begin);
+  //# SetIndexDrawBegin(1,draw_begin);
   //# SetIndexDrawBegin(0,InpMAPeriod+InpMAShift);
 
 
