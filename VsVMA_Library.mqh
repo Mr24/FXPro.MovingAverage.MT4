@@ -8,7 +8,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.5.3 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.5.4 Update:2017.01.11"
 
 #include <MovingAverages.mqh>
 
