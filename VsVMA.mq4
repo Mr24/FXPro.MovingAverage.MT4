@@ -17,7 +17,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.5.4 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.6.0 Update:2017.01.11"
 #property strict
 
 #include <MovingAverages.mqh>
@@ -65,8 +65,8 @@ input int             InpLevels=5;
 double ExtMainBuffer[];
 double ExtTop100Buffer[];
 double ExtBtm100Buffer[];
-double ExtTop200Buffer[];
-double ExtBtm200Buffer[];
+// double ExtTop200Buffer[];
+// double ExtBtm200Buffer[];
 
 
 //+------------------------------------------------------------------+
