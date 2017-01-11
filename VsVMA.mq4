@@ -17,7 +17,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.5.0 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.5.2 Update:2017.01.11"
 #property strict
 
 #include <MovingAverages.mqh>
@@ -37,7 +37,7 @@
 #property indicator_style2  STYLE_DOT
 #property indicator_width2  1
 //+ Btm.100
-#property indicator_color3  Blue
+#property indicator_color3  LightGoldenrod
 #property indicator_type3   DRAW_LINE
 #property indicator_style3  STYLE_DOT
 #property indicator_width3  1
@@ -47,7 +47,7 @@
 input int             InpMAPeriod=200;        // Period
 input int             InpMAShift=0;          // Shift
 input ENUM_MA_METHOD  InpMAMethod=MODE_EMA;  // Method
-input string          sInpLevels="3";
+input int             InpLevels=3;
 
 //--- MovingAverage : Indicator buffer
 double ExtMainBuffer[];
@@ -60,11 +60,10 @@ double ExtBtm100Buffer[];
 //+------------------------------------------------------------------+
 int OnInit(void)
 {
-  string short_name,ssInpLevel;
+  string short_name,sInpLevel;
   int    draw_begin=0;
-  int i;
-  int InpLevels=StrToInteger(sInpLevels);
-
+  int l;
+  
 //--- MovingAverage : Indicator Short Name
   short_name="EMA(";
   IndicatorShortName(short_name+string(InpMAPeriod)+")");
@@ -79,20 +78,20 @@ int OnInit(void)
   SetIndexShift(0,InpMAShift);
   SetIndexLabel(0,"MA.Main");
 //+ Top.100
-  for (i=1;i<InpLevels;i++)
+  for (l=1;l<InpLevels;l++)
   {
-    ssInpLevel = (string)i;
-    if(i % 2 == 0)
+    sInpLevel = (string)l;
+    if(l % 2 == 0)
     {
-      SetIndexStyle(i,DRAW_LINE);
-      SetIndexShift(i,InpMAShift);
-      SetIndexLabel(i,"Btm."+ssInpLevel+"00");  
+      SetIndexStyle(l,DRAW_LINE);
+      SetIndexShift(l,InpMAShift);
+      SetIndexLabel(l,"Btm."+sInpLevel+"00");  
     }
     else
     {
-      SetIndexStyle(i,DRAW_LINE);
-      SetIndexShift(i,InpMAShift);
-      SetIndexLabel(i,"Top."+ssInpLevel+"00");
+      SetIndexStyle(l,DRAW_LINE);
+      SetIndexShift(l,InpMAShift);
+      SetIndexLabel(l,"Top."+sInpLevel+"00");
     }
   }
   /*
@@ -114,9 +113,9 @@ int OnInit(void)
 
 //--- MovingAverage : Drawing Begin
   SetIndexDrawBegin(0,draw_begin);
-  for (i=1;i<InpLevels;i++)
+  for (l=1;l<InpLevels;l++)
   {
-    SetIndexDrawBegin(i,draw_begin);
+    SetIndexDrawBegin(l,draw_begin);
   }
   /*
   SetIndexDrawBegin(InpLevels,draw_begin);
@@ -150,7 +149,7 @@ int OnCalculate(const int rates_total,
 //--- MovingAverage.Calucurate.Setup ---//
   int i,limit;
   double p=1.0;
-
+  
 //--- Check for Bars Count
   if(rates_total<InpMAPeriod-1 || InpMAPeriod<2)
     return(0);
@@ -171,13 +170,22 @@ int OnCalculate(const int rates_total,
     limit=InpMAPeriod;
     ExtMainBuffer[0]=close[0];
 
+    
     for(i=1;i<limit;i++)
     {
       ExtMainBuffer[i]=ExponentialMA(i,InpMAPeriod,ExtMainBuffer[i-1],close);
-      ExtTop100Buffer[i] = OnMACalculate(i,InpMAPeriod,ExtMainBuffer[i],close);
+      ExtTop100Buffer[i]=OnMALevelsCalculate(1,ExtMainBuffer[i]);
+      ExtBtm100Buffer[i]=OnMALevelsCalculate(2,ExtMainBuffer[i]);
+      
+    /*  
+      ExtMainBuffer[i]=ExponentialMA(i,InpMAPeriod,ExtMainBuffer[i-1],close);
+      ExtTop100Buffer[i]=OnMACalculate(i,InpMAPeriod,ExtMainBuffer[i],close);
       // ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
       ExtBtm100Buffer[i]=ExtMainBuffer[i]-(p/10);
+    */  
     }
+    
+
   }
 
 //--- Main Loop Calculation
@@ -186,10 +194,16 @@ int OnCalculate(const int rates_total,
 
   for( i=limit; i<rates_total && !IsStopped(); i++ )
   {
+    ExtMainBuffer[i]=ExponentialMA(i,InpMAPeriod,ExtMainBuffer[i-1],close);
+    ExtTop100Buffer[i]=OnMALevelsCalculate(1,ExtMainBuffer[i]);
+    ExtBtm100Buffer[i]=OnMALevelsCalculate(2,ExtMainBuffer[i]);
+    
+     /*
      ExtMainBuffer[i]=ExponentialMA(i,InpMAPeriod,ExtMainBuffer[i-1],close);
-     ExtTop100Buffer[i] = OnMACalculate(i,InpMAPeriod,ExtMainBuffer[i],close);
+     ExtTop100Buffer[i]=OnMACalculate(i,InpMAPeriod,ExtMainBuffer[i],close);
      // ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
      ExtBtm100Buffer[i]=ExtMainBuffer[i]-(p/10);
+     */
   }
 
 //--- MovingAverage.Calucurate.End ---//
