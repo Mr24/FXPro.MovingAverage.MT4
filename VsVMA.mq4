@@ -17,7 +17,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.6.0 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.6.1 Update:2017.01.11"
 #property strict
 
 #include <MovingAverages.mqh>
@@ -31,6 +31,7 @@
 #property indicator_type1   DRAW_LINE
 #property indicator_style1  STYLE_SOLID
 #property indicator_width1  2
+
 //+ Top.100
 #property indicator_color2  LightGoldenrod
 #property indicator_type2   DRAW_LINE
@@ -41,8 +42,6 @@
 #property indicator_type3   DRAW_LINE
 #property indicator_style3  STYLE_DOT
 #property indicator_width3  1
-
-
 //+ Top.200
 #property indicator_color4  LightGoldenrod
 #property indicator_type4   DRAW_LINE
@@ -59,12 +58,12 @@
 input int             InpMAPeriod=200;        // Period
 input int             InpMAShift=0;          // Shift
 input ENUM_MA_METHOD  InpMAMethod=MODE_EMA;  // Method
-input int             InpLevels=5;
+// input int             InpLevels=5;
 
 //--- MovingAverage : Indicator buffer
 double ExtMainBuffer[];
-double ExtTop100Buffer[];
-double ExtBtm100Buffer[];
+// double ExtTop100Buffer[];
+// double ExtBtm100Buffer[];
 // double ExtTop200Buffer[];
 // double ExtBtm200Buffer[];
 
@@ -82,6 +81,7 @@ int OnInit(void)
   short_name="EMA(";
   IndicatorShortName(short_name+string(InpMAPeriod)+")");
 
+/*
 //--- 1 additional buffer used for counting.
   IndicatorBuffers(5);  
   IndicatorDigits(Digits);
@@ -91,7 +91,11 @@ int OnInit(void)
   SetIndexStyle(0,DRAW_LINE);
   SetIndexShift(0,InpMAShift);
   SetIndexLabel(0,"MA.Main");
+*/
+
 //+ Top.100
+  OnMAInit();
+  /*
   for (l=1;l<InpLevels;l++)
   {
     // sInpLevel = (string)l;
@@ -118,6 +122,9 @@ int OnInit(void)
       continue;
     }
   }
+  */
+
+
   /*
   SetIndexStyle(InpLevels,DRAW_LINE);
   SetIndexShift(InpLevels,InpMAShift);
@@ -131,10 +138,12 @@ int OnInit(void)
 
 //--- MovingAverage : Indicator Buffers Mapping
   SetIndexBuffer(0,ExtMainBuffer);
+  /*
   SetIndexBuffer(1,ExtTop100Buffer);
   SetIndexBuffer(2,ExtBtm100Buffer);
   SetIndexBuffer(3,ExtTop200Buffer);
   SetIndexBuffer(4,ExtBtm200Buffer);
+  */
   //# SetIndexBuffer(1,ExtTop100Buffer);
 
 //--- MovingAverage : Drawing Begin
@@ -143,6 +152,7 @@ int OnInit(void)
   {
     SetIndexDrawBegin(l,draw_begin);
   }
+  
   /*
   SetIndexDrawBegin(InpLevels,draw_begin);
   */

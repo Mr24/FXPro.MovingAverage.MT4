@@ -8,10 +8,16 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.6.0 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.6.1 Update:2017.01.11"
 
 #include <MovingAverages.mqh>
 
+//--- MovingAverage : Indicator parameters
+input int             InpLevels=5;
+
+//--- MovingAverage : Indicator buffer
+double ExtTop100Buffer[];
+double ExtBtm100Buffer[];
 double ExtTop200Buffer[];
 double ExtBtm200Buffer[];
 
@@ -20,7 +26,56 @@ double ExtBtm200Buffer[];
 //+------------------------------------------------------------------+
 //| Custom Indicator Initialization Function                         |
 //+------------------------------------------------------------------+
+int OnMAInit(void)
+{
+	string sInpLevel;
+	int l,ll;
 
+//--- 1 additional buffer used for counting.
+ 	IndicatorBuffers(5);  
+  	IndicatorDigits(Digits);
+  
+//--- MovingAverage : Drawing Settings
+//+ MA.Main
+  	SetIndexStyle(0,DRAW_LINE);
+  	SetIndexShift(0,InpMAShift);
+  	SetIndexLabel(0,"MA.Main");
+
+//+ Top.100
+	for(l=1;l<InpLevels;l++)
+	{
+		ll = l/2;
+    	
+    	if(l % 2 == 0)
+    	{
+      		sInpLevel = (string)ll;
+
+      		SetIndexStyle(l,DRAW_LINE);
+      		SetIndexShift(l,InpMAShift);
+      		SetIndexLabel(l,"Btm."+sInpLevel+"00");
+      		continue;
+      	}
+    	else
+    	{
+      		ll = ll+1;
+      		sInpLevel = (string)ll;
+
+		    SetIndexStyle(l,DRAW_LINE);
+      		SetIndexShift(l,InpMAShift);
+      		SetIndexLabel(l,"Top."+sInpLevel+"00");
+      		continue;
+    	}
+	}
+
+//--- MovingAverage : Indicator Buffers Mapping
+	SetIndexBuffer(1,ExtTop100Buffer);
+	SetIndexBuffer(2,ExtBtm100Buffer);
+	SetIndexBuffer(3,ExtTop200Buffer);
+	SetIndexBuffer(4,ExtBtm200Buffer);
+
+
+	return 0;
+}
 
 
 //+------------------------------------------------------------------+
