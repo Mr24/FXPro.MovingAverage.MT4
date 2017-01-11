@@ -17,7 +17,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright(c) 2016 -, VerysVery Inc. && Yoshio.Mr24"
 #property link      "https://github.com/VerysVery/"
-#property description "VsV.MT4.MovingAverage - Ver.0.6.1 Update:2017.01.11"
+#property description "VsV.MT4.MovingAverage - Ver.0.6.2 Update:2017.01.11"
 #property strict
 
 #include <MovingAverages.mqh>
@@ -55,17 +55,14 @@
 
 
 //--- MovingAverage : Indicator parameters
+/*
 input int             InpMAPeriod=200;        // Period
 input int             InpMAShift=0;          // Shift
 input ENUM_MA_METHOD  InpMAMethod=MODE_EMA;  // Method
-// input int             InpLevels=5;
+*/
 
 //--- MovingAverage : Indicator buffer
-double ExtMainBuffer[];
-// double ExtTop100Buffer[];
-// double ExtBtm100Buffer[];
-// double ExtTop200Buffer[];
-// double ExtBtm200Buffer[];
+// double ExtMainBuffer[];
 
 
 //+------------------------------------------------------------------+
@@ -73,78 +70,22 @@ double ExtMainBuffer[];
 //+------------------------------------------------------------------+
 int OnInit(void)
 {
-  string short_name,sInpLevel;
+  // string short_name,sInpLevel;
+  string short_name;
   int    draw_begin=0;
-  int l,ll;
+  // int l,ll;
+  int l;
   
 //--- MovingAverage : Indicator Short Name
   short_name="EMA(";
   IndicatorShortName(short_name+string(InpMAPeriod)+")");
 
-/*
+
 //--- 1 additional buffer used for counting.
-  IndicatorBuffers(5);  
-  IndicatorDigits(Digits);
-  
 //--- MovingAverage : Drawing Settings
-//+ MA.Main
-  SetIndexStyle(0,DRAW_LINE);
-  SetIndexShift(0,InpMAShift);
-  SetIndexLabel(0,"MA.Main");
-*/
-
-//+ Top.100
-  OnMAInit();
-  /*
-  for (l=1;l<InpLevels;l++)
-  {
-    // sInpLevel = (string)l;
-    ll = l/2;
-    if(l % 2 == 0)
-    {
-      // ll = l/2;
-      sInpLevel = (string)ll;
-
-      SetIndexStyle(l,DRAW_LINE);
-      SetIndexShift(l,InpMAShift);
-      SetIndexLabel(l,"Btm."+sInpLevel+"00");
-      continue;
-    }
-    else
-    {
-      // ll = l/2+1;
-      ll = ll+1;
-      sInpLevel = (string)ll;
-
-      SetIndexStyle(l,DRAW_LINE);
-      SetIndexShift(l,InpMAShift);
-      SetIndexLabel(l,"Top."+sInpLevel+"00");
-      continue;
-    }
-  }
-  */
-
-
-  /*
-  SetIndexStyle(InpLevels,DRAW_LINE);
-  SetIndexShift(InpLevels,InpMAShift);
-  SetIndexLabel(InpLevels,"Top."+sInpLevels+"00");
-  */
-  // SetIndexLabel(InpLevels,"Top.100");
-  //# SetIndexStyle(1,DRAW_LINE);
-  //# SetIndexShift(1,InpMAShift);
-  //# SetIndexLabel(1,"Top.100");
-
-
 //--- MovingAverage : Indicator Buffers Mapping
-  SetIndexBuffer(0,ExtMainBuffer);
-  /*
-  SetIndexBuffer(1,ExtTop100Buffer);
-  SetIndexBuffer(2,ExtBtm100Buffer);
-  SetIndexBuffer(3,ExtTop200Buffer);
-  SetIndexBuffer(4,ExtBtm200Buffer);
-  */
-  //# SetIndexBuffer(1,ExtTop100Buffer);
+
+  OnMAInit();
 
 //--- MovingAverage : Drawing Begin
   SetIndexDrawBegin(0,draw_begin);
@@ -152,13 +93,6 @@ int OnInit(void)
   {
     SetIndexDrawBegin(l,draw_begin);
   }
-  
-  /*
-  SetIndexDrawBegin(InpLevels,draw_begin);
-  */
-  //# SetIndexDrawBegin(1,draw_begin);
-  //# SetIndexDrawBegin(0,InpMAPeriod+InpMAShift);
-
 
 //--- MovingAverage : Initialization Done
   return(INIT_SUCCEEDED);
@@ -183,22 +117,29 @@ int OnCalculate(const int rates_total,
 {
 
 //--- MovingAverage.Calucurate.Setup ---//
+  /*
   int i,limit;
   double p=1.0;
+  */
   
 //--- Check for Bars Count
+/*
   if(rates_total<InpMAPeriod-1 || InpMAPeriod<2)
     return(0);
-
+*/
 //--- Counting from 0 to rates_total
+OnMACalculate(rates_total,prev_calculated,close);
+/*
   ArraySetAsSeries(ExtMainBuffer,false);  //# OLD => New
   ArraySetAsSeries(ExtTop100Buffer,false);  //# OLD => New
   ArraySetAsSeries(ExtBtm100Buffer,false);  //# OLD => New
   ArraySetAsSeries(ExtTop200Buffer,false);  //# OLD => New
   ArraySetAsSeries(ExtBtm200Buffer,false);  //# OLD => New
   ArraySetAsSeries(close,false);          //# OLD => New
+  */
 
 //--- First Calculation or Number of Bars was Changed
+/*
   if(prev_calculated==0)
   {
     ArrayInitialize(ExtMainBuffer,0); //# ExtMainBuffer=0 : ALL
@@ -224,13 +165,15 @@ int OnCalculate(const int rates_total,
       ExtTop100Buffer[i]=OnMACalculate(i,InpMAPeriod,ExtMainBuffer[i],close);
       // ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
       ExtBtm100Buffer[i]=ExtMainBuffer[i]-(p/10);
-    */  
+      
     }
     
 
   }
+*/
 
 //--- Main Loop Calculation
+/*
   else
     limit=prev_calculated-1;
 
@@ -248,8 +191,9 @@ int OnCalculate(const int rates_total,
      ExtTop100Buffer[i]=OnMACalculate(i,InpMAPeriod,ExtMainBuffer[i],close);
      // ExtTop100Buffer[i]=ExtMainBuffer[i]+(p/10);
      ExtBtm100Buffer[i]=ExtMainBuffer[i]-(p/10);
-     */
+     
   }
+*/
 
 //--- MovingAverage.Calucurate.End ---//
 
